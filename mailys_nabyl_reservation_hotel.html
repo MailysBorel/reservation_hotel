@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Réservation Hôtel</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: url('https://images.pexels.com/photos/1268871/pexels-photo-1268871.jpeg') no-repeat center center;
+      background-size: cover;
+    }
+    .form-container {
+      background-color: rgba(78, 75, 75, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .confirm-container {
+      background-color: rgba(78, 75, 75, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      color: white;
+    }
+    .age-input {
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body class="text-light">
+  <div class="container py-5">
+    <h2 class="text-center text-light mb-4">BOOKING HOTEL</h2>
+    <div class="row">
+     
+      <div class="col-md-6">
+        <div class="form-container">
+          <h4>France - Étranger</h4>
+          <div class="mb-3">
+            <label for="ville" class="form-label">Lieu de séjour</label>
+            <input type="text" class="form-control" id="ville" value="">
+          </div>
+          <div class="mb-3">
+            <label>Date d'arrivée</label>
+            <input type="date" class="form-control" id="arrivee" value="">
+          </div>
+          <div class="mb-3">
+            <label>Date de départ</label>
+            <input type="date" class="form-control" id="depart" value="">
+          </div>
+
+         
+          <div class="mb-3">
+            <label>Adultes</label>
+            <div class="input-group">
+              <button class="btn btn-outline-secondary" onclick="updateCount('adulte', -1)">-</button>
+              <input type="number" id="adulte" class="form-control text-center" value="0">
+              <button class="btn btn-outline-secondary" onclick="updateCount('adulte', 1)">+</button>
+            </div>
+          </div>
+
+      
+          <div class="mb-3">
+            <label>Enfants</label>
+            <div class="input-group">
+              <button class="btn btn-outline-secondary" onclick="updateCount('enfant', -1); renderAgeInputs();">-</button>
+              <input type="number" id="enfant" class="form-control text-center" value="0" onchange="renderAgeInputs()">
+              <button class="btn btn-outline-secondary" onclick="updateCount('enfant', 1); renderAgeInputs();">+</button>
+            </div>
+            <div class="mb-3" id="age-enfants-container"></div>
+          </div>
+
+     
+          <div class="mb-3">
+            <label>Chambres</label>
+            <div class="input-group">
+              <button class="btn btn-outline-secondary" onclick="updateCount('chambre', -1)">-</button>
+              <input type="number" id="chambre" class="form-control text-center" value="0">
+              <button class="btn btn-outline-secondary" onclick="updateCount('chambre', 1)">+</button>
+            </div>
+          </div>
+
+        
+          <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="travail">
+            <label class="form-check-label" for="travail">Je voyage pour le travail</label>
+          </div>
+
+         
+          <button class="btn btn-success" onclick="updateConfirmation()">Rechercher</button>
+          <button class="btn btn-danger ms-2" onclick="resetForm()">Effacer</button>
+        </div>
+      </div>
+
+      
+      <div class="col-md-6">
+        <div class="confirm-container">
+          <h4>Confirmation réservation</h4>
+          <p>Nombre d'adultes : <span id="conf-adulte"></span></p>
+          <p>Nombre d'enfants : <span id="conf-enfant"></span></p>
+          <p>Nombre de chambres : <span id="conf-chambre"></span></p>
+          <p>Voyage pour le travail : <span id="conf-travail"></span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateCount(id, change) {
+      const input = document.getElementById(id);
+      let value = parseInt(input.value) + change;
+      if (value < 0) value = 0;
+      input.value = value;
+    }
+
+    function renderAgeInputs() {
+      const nbEnfants = parseInt(document.getElementById('enfant').value);
+      const container = document.getElementById('age-enfants-container');
+      
+      
+      container.innerHTML = '';
+      
+     
+      for (let i = 0; i < nbEnfants; i++) {
+        const div = document.createElement('div');
+        div.className = 'age-input';
+        
+        const label = document.createElement('label');
+        label.className = 'form-label';
+        label.textContent = `Âge de l'enfant ${i + 1}`;
+        
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.className = 'form-control';
+        input.min = '0';
+        input.max = '10';
+        input.value = '0';
+        input.id = `age-enfant-${i}`;
+        
+        div.appendChild(label);
+        div.appendChild(input);
+        container.appendChild(div);
+      }
+    }
+
+    function updateConfirmation() {
+      const arrivee = new Date(document.getElementById('arrivee').value);
+      const depart =  new Date(document.getElementById('depart').value);
+
+  if (depart < arrivee) {
+    alert("La date de départ ne peut pas être antérieure à la date d'arrivée.");
+    return;
+  }
+      document.getElementById('conf-adulte').textContent = document.getElementById('adulte').value;
+      document.getElementById('conf-enfant').textContent = document.getElementById('enfant').value;
+      document.getElementById('conf-chambre').textContent = document.getElementById('chambre').value;
+      document.getElementById('conf-travail').textContent = document.getElementById('travail').checked ? "Oui" : "Non";
+    }
+
+    function resetForm() {
+      document.getElementById('ville').value = '';
+      document.getElementById('arrivee').value = '';
+      document.getElementById('depart').value = '';
+      document.getElementById('adulte').value = '0';
+      document.getElementById('enfant').value = '0';
+      document.getElementById('chambre').value = '0';
+      document.getElementById('travail').checked = false;
+      document.getElementById('age-enfants-container').innerHTML = '';
+      updateConfirmation();
+    }
+
+   
+    updateConfirmation();
+
+    window.onload = function () {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('arrivee').min = today;
+
+  document.getElementById('arrivee').addEventListener('change', function () {
+    document.getElementById('depart').min = this.value;
+  });
+};
+  </script>
+
+</body>
+</html>
